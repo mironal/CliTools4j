@@ -24,21 +24,6 @@ public class Options {
         return Collections.unmodifiableSet(options.keySet());
     }
 
-    public boolean hasOption(String key) {
-        if (key == null) {
-            throw new NullPointerException("key is null.");
-        }
-        return options.containsKey(key);
-    }
-
-    public boolean hasOptinos(String... keys) {
-        for (String key : keys) {
-            if (!hasOption(key)) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     public String getOptionValue(String key) {
         return options.get(key).value;

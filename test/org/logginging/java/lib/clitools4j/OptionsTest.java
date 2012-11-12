@@ -21,19 +21,6 @@ public class OptionsTest {
         assertThat(info.value, is("hoge"));
     }
 
-    @Test
-    public void hasOption() {
-        Options options = new Options();
-        assertThat(options, notNullValue());
-        assertThat(options.hasOption("--hoge"), is(false));
-
-        options.addOption("--hoge", "hogehoge");
-        assertThat(options.hasOptinos("--hoge"), is(true));
-
-        assertThat(options.hasOptinos("--huga"), is(false));
-        options.addOption("--huga", "hugahuga");
-        assertThat(options.hasOption("--huga"), is(true));
-    }
 
     @Test(expected = NullPointerException.class)
     public void addOptionNullOption() {
@@ -47,29 +34,7 @@ public class OptionsTest {
         options.addOption("", null);
     }
     
-    @Test(expected = NullPointerException.class)
-    public void hasOptionNullKey(){
-        Options options = new Options();
-        options.hasOption(null);
-    }
     
-    @Test
-    public void getOptionValue(){
-        Options options = new Options();
-        assertThat(options, notNullValue());
-        assertThat(options.hasOption("--hoge"), is(false));
-        options.addOption("--hoge", "hogehoge");
-        assertThat(options.hasOption("--hoge"), is(true));
-        
-        options.setValue("--hoge", "hoge");
-        assertThat(options.getOptionValue("--hoge"), is("hoge"));
-    }
     
-    @Test
-    public void setValue(){
-        Options options = new Options();
-        assertThat(options.has)
-        
-    }
 
 }
