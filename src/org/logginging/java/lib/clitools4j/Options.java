@@ -24,7 +24,6 @@ public class Options {
         return Collections.unmodifiableSet(options.keySet());
     }
 
-
     public String getOptionValue(String key) {
         return options.get(key).value;
     }
@@ -42,6 +41,17 @@ public class Options {
         return entry;
     }
 
+    public boolean hasValue(String option) {
+        if (option == null) {
+            throw new NullPointerException("option is null.");
+        }
+        if (options.containsKey(option)) {
+            return options.get(option).value != null;
+
+        }
+        return false;
+    }
+
     Options addOption(String option, String description) {
         if (option == null) {
             throw new NullPointerException("option is null.");
@@ -50,7 +60,7 @@ public class Options {
             throw new NullPointerException("description is null.");
         }
         options.put(option, new OptionInfo(description));
-        
+
         return this;
     }
 

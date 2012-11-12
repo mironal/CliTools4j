@@ -50,7 +50,7 @@ public class SampleApp {
                         
                         // まずはオプションのチェック
                         // 何かオプションに問題があったらメッセージを含めて例外を投げる.
-                        if (!options.hasOption("--name")) {
+                        if (!options.hasValue("--name")) {
                             // ex. 必須のオプションが指定されていないとき.
                             throw new CommandProcedureException("--name is required.");
                         }
