@@ -3,7 +3,6 @@ package org.logginging.java.lib.clitools4j;
 
 import java.util.Set;
 
-
 public class Command<E extends Enum<E>> {
 
     private final E type;
