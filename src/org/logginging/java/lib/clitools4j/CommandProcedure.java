@@ -20,6 +20,6 @@ public interface CommandProcedure extends HasHelp<Options> {
      * 
      * @param e
      */
-    void onCatchError(CommandProcedureException e);
+    void onCatchException(CommandProcedureException e);
     
 }

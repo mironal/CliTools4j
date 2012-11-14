@@ -24,102 +24,93 @@ public class SampleApp {
     // @formatter:on
 
     public static void main(String[] args) {
-        
+
         /*
-         * gitのような形式のコマンド向けのライブラリ.
-         * git commit -aみたいなやつ.
-         * 
-         * 各コマンド毎にオプションの宣言位置と、実際に行われる処理、エラー処理、helpの
-         * 宣言位置が離れないところが特徴.
-         * 例外を使用することで、コマンド実行処理中に何かエラーが発生した場合に
-         * 即座に処理を中断し、エラー処理に映ることが出来る.
+         * gitのような形式のコマンド向けのライブラリ. git commit -aみたいなやつ.
+         * 各コマンド毎にオプションの宣言位置と、実際に行われる処理、エラー処理、helpの 宣言位置が離れないところが特徴.
+         * 例外を使用することで、コマンド実行処理中に何かエラーが発生した場合に 即座に処理を中断し、エラー処理に映ることが出来る.
          */
 
         // createコマンドの定義
-        Command<Kind> create = new Command<SampleApp.Kind>(Kind.Create)
-        // @formatter:off
-                // createコマンドが取るオプションを登録
-                .addOption("--name", "object name.")
-                .addOption("--desc", "object description")
-                // @formatter:on
-                .withProcedure(new CommandProcedure() {
+        Command<Kind> create = new Command<SampleApp.Kind>(Kind.Create, new CommandProcedure() {
+            @Override
+            // コマンドが実行される時に呼ばれる
+            public void onExecute(Options options) throws CommandProcedureException {
 
-                    @Override
-                    // コマンドが実行される時に呼ばれる
-                    public void onExecute(Options options) throws CommandProcedureException {
-                        
-                        // まずはオプションのチェック
-                        // 何かオプションに問題があったらメッセージを含めて例外を投げる.
-                        if (!options.hasValue("--name")) {
-                            // ex. 必須のオプションが指定されていないとき.
-                            throw new CommandProcedureException("--name is required.");
-                        }
-                        // 問題なければコマンドの実行を続ける
-                        StringBuilder builder = new StringBuilder();
-                        builder.append("create ").append(options.getOptionValue("--name"));
-                        builder.append("\n");
-                        builder.append("success!.");
+                // まずはオプションのチェック
+                // 何かオプションに問題があったらメッセージを含めて例外を投げる.
+                if (!options.hasValue("--name")) {
+                    // ex. 必須のオプションが指定されていないとき.
+                    throw new CommandProcedureException("--name is required.");
+                }
+                // 問題なければコマンドの実行を続ける
+                StringBuilder builder = new StringBuilder();
+                builder.append("create ").append(options.getValue("--name"));
+                builder.append("\n");
+                builder.append("success!.");
 
-                        System.out.println(builder.toString());
-                    }
+                System.out.println(builder.toString());
+            }
 
-                    @Override
-                    // onExecuteで例外を投げた時はここに飛ぶ.
-                    public void onCatchError(CommandProcedureException e) {
-                        // 表示するメッセージはonExecuteで生成済みなので、printするだけ
-                        System.err.println(e.getMessage());
-                    }
+            @Override
+            // onExecuteで例外を投げた時はここに飛ぶ.
+            public void onCatchException(CommandProcedureException e) {
+                // 表示するメッセージはonExecuteで生成済みなので、printするだけ
+                System.err.println(e.getMessage());
+            }
 
-                    @Override
-                    // --helpなどでhelpが要求されたときはここに飛ぶ
-                    public void onAskHelp(Options options) {
-                        // @formatter:off
-                        String help = "Something help.\n +" +
-                        		"hogehogehogehoge.";
-                        // @formatter:on
-                        System.out.println(help);
-                    }
+            @Override
+            // --helpなどでhelpが要求されたときはここに飛ぶ
+            public void onAskHelp(Options options) {
+                String help = "Something help.\n +" +
+                              "hogehogehogehoge.";
+                System.out.println(help);
+            }
+        })
+        // ヘルプコマンドを追加する(-hと--helpが自動的に追加される
+        .withHelpOption("help this command.")
+         // createコマンドが取るオプションを登録
+        .addOption("--name", "object name.")
+        .addOption("--desc", "object description");
 
-                });
-        
         // listコマンドの定義
-        Command<Kind> list = new Command<SampleApp.Kind>(Kind.List)
-                .withProcedure(new CommandProcedure() {
+        Command<Kind> list = new Command<SampleApp.Kind>(Kind.List, new CommandProcedure() {
 
-                    @Override
-                    public void onAskHelp(Options options) {
-                        // do something
-                    }
+            @Override
+            public void onAskHelp(Options options) {
+                // do something
+            }
 
-                    @Override
-                    public void onExecute(Options options) throws CommandProcedureException {
-                        // do something
-                    }
+            @Override
+            public void onExecute(Options options) throws CommandProcedureException {
+                // do something
+            }
 
-                    @Override
-                    public void onCatchError(CommandProcedureException e) {
-                        // do something
-                    }
-                });
+            @Override
+            public void onCatchException(CommandProcedureException e) {
+                // do something
+            }
+        });
 
         // deleteコマンドの定義
-        Command<Kind> delete = new Command<Kind>(Kind.Delete).addOption("--neme", "object name.")
-                .withProcedure(new CommandProcedure() {
-                    @Override
-                    public void onCatchError(CommandProcedureException e) {
-                        // do something
-                    }
+        Command<Kind> delete = new Command<Kind>(Kind.Delete, new CommandProcedure() {
 
-                    @Override
-                    public void onAskHelp(Options options) {
-                        // do something
-                    }
+            @Override
+            public void onAskHelp(Options options) {
+                // do something
+            }
 
-                    @Override
-                    public void onExecute(Options options) throws CommandProcedureException {
-                        // do something
-                    }
-                }).addOption("--name", "object name.");
+            @Override
+            public void onExecute(Options options) throws CommandProcedureException {
+                // do something
+            }
+
+            @Override
+            public void onCatchException(CommandProcedureException e) {
+                // do something
+
+            }
+        }).addOption("--name", "object name.");
 
         CommandLineExecutor<Kind> executor = new CommandLineExecutor<SampleApp.Kind>(Kind.class) {
             @Override
@@ -132,9 +123,8 @@ public class SampleApp {
 
         // 上で作ったコマンドを登録.
         executor.addCommand(create).addCommand(list).addCommand(delete);
-        
+
         // 実行
         executor.execute(args);
-
     }
 }

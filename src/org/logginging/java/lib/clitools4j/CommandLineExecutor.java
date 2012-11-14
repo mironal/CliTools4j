@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 
-public abstract class CommandLineExecutor<E extends Enum<E>> implements HasHelp<Map<E, Command<E>>>{
+public abstract class CommandLineExecutor<E extends Enum<E>> implements HasHelp<Map<E, Command<E>>> {
 
     private final Class<E> enumType;
     private Map<E, Command<E>> commands;
@@ -26,11 +26,7 @@ public abstract class CommandLineExecutor<E extends Enum<E>> implements HasHelp<
         return this;
     }
 
-    public CommandLineExecutor<E> withTopLevelHelp(String help) {
-        return this;
-    }
-    
-    private Map<E, Command<E>> getUnmodifiableCommandMap(){
+    private Map<E, Command<E>> getUnmodifiableCommandMap() {
         return Collections.unmodifiableMap(commands);
     }
 

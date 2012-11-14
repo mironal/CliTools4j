@@ -9,6 +9,9 @@ import java.util.Set;
 
 public class Options {
 
+    static String OPTION_HELP_SHORT = "-h";
+    static String OPTION_HELP_LONG = "--help";
+
     static class OptionInfo {
         String description;
         String value = null;
@@ -24,15 +27,21 @@ public class Options {
         return Collections.unmodifiableSet(options.keySet());
     }
 
-    public String getOptionValue(String key) {
-        return options.get(key).value;
-    }
-
     public boolean requestHelp() {
-        // TODO Auto-generated method stub
+        if (hasOption(OPTION_HELP_LONG) && hasValue(OPTION_HELP_LONG)) {
+            return true;
+        }
+        if (hasOption(OPTION_HELP_SHORT) && hasValue(OPTION_HELP_SHORT)) {
+            return true;
+        }
         return false;
     }
 
+    /**
+     * optionとdescriptionのmapを返す
+     * 
+     * @return
+     */
     public Map<String, String> getOptionEntry() {
         Map<String, String> entry = new HashMap<String, String>();
         for (Entry<String, OptionInfo> e : options.entrySet()) {
@@ -41,6 +50,10 @@ public class Options {
         return entry;
     }
 
+    /**
+     * @param option
+     * @return
+     */
     public boolean hasValue(String option) {
         if (option == null) {
             throw new NullPointerException("option is null.");
@@ -50,6 +63,24 @@ public class Options {
 
         }
         return false;
+    }
+
+    /**
+     * @param key
+     * @return
+     */
+    public String getValue(String key) {
+        if (options.containsKey(key)) {
+            return options.get(key).value;
+        }
+        throw new IllegalArgumentException(key + " is not contain.");
+    }
+
+    boolean hasOption(String option) {
+        if (option == null) {
+            throw new NullPointerException("option is null.");
+        }
+        return options.containsKey(option);
     }
 
     Options addOption(String option, String description) {
@@ -64,15 +95,15 @@ public class Options {
         return this;
     }
 
-    Options setValue(String key, String value) {
-        if (key == null) {
+    Options setValue(String option, String value) {
+        if (option == null) {
             throw new NullPointerException("key is null.");
         }
         if (value == null) {
             throw new NullPointerException("value is null.");
         }
-        if (options.containsKey(key)) {
-            options.get(key).value = value;
+        if (options.containsKey(option)) {
+            options.get(option).value = value;
         }
         return this;
     }
