@@ -15,6 +15,11 @@
           <target>1.6</target>
         </configuration>
       </plugin>
+      <plugin>
+      <groupId>org.jacoco</groupId>
+      <artifactId>jacoco-maven-plugin</artifactId>
+      <version>0.6.0.201210061924</version>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
