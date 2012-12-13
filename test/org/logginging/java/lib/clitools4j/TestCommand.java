@@ -1,23 +1,24 @@
 
 package org.logginging.java.lib.clitools4j;
 
-public class TestProcedure implements CommandProcedure {
+public class TestCommand extends Command<Kind> {
 
     boolean onAskHelpCalled = false;
     boolean onExecuteCalled = false;
     boolean onCatchErrorCalled = false;
 
-    @Override
+    public TestCommand(Kind type) {
+        super(type);
+    }
+
     public void onAskHelp(Options options) {
         onAskHelpCalled = true;
     }
 
-    @Override
     public void onExecute(Options options) throws CommandProcedureException {
         onExecuteCalled = true;
     }
 
-    @Override
     public void onCatchException(CommandProcedureException e) {
         onCatchErrorCalled = true;
     }
