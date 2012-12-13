@@ -3,30 +3,28 @@ package org.logginging.java.lib.clitools4j;
 
 import java.util.Set;
 
-public class Command<E extends Enum<E>> {
+public abstract class Command<E extends Enum<E>> implements CommandProcedure {
 
     private final E type;
-    private CommandProcedure procedure;
     private Options options = new Options();
 
-    public Command(E type, CommandProcedure procedure) {
+    public Command(E type) {
         if (type == null) {
             throw new NullPointerException("type is null.");
         }
-        if (procedure == null) {
-            throw new NullPointerException("procedure is null.");
-        }
         this.type = type;
-        this.procedure = procedure;
     }
 
     /**
      * --helpと-hが追加される
      * 
      * @param description
+     * @return 
      * @return
      */
-    public Command<E> withHelpOption(String description) {
+    
+    //public Command<E> withHelpOption(String description) {
+    public void withHelpOption(String description) {
         if (description == null) {
             throw new NullPointerException("description is null.");
         }
@@ -34,16 +32,14 @@ public class Command<E extends Enum<E>> {
         options.addOption(Options.OPTION_HELP_LONG, description)
                .addOption(Options.OPTION_HELP_SHORT, description);
         // @formatter:on
-        return this;
     }
 
     public E getType() {
         return type;
     }
 
-    public Command<E> addOption(String key, String description) {
+    public void addOption(String key, String description) {
         options.addOption(key, description);
-        return this;
     }
 
     /**
@@ -57,7 +53,7 @@ public class Command<E extends Enum<E>> {
 
         /* 実行 */
         if (options.requestHelp()) {
-            procedure.onAskHelp(options);
+            onAskHelp(options);
         } else {
             proceedCommand();
         }
@@ -97,9 +93,9 @@ public class Command<E extends Enum<E>> {
 
     private void proceedCommand() {
         try {
-            procedure.onExecute(options);
+            onExecute(options);
         } catch (CommandProcedureException e) {
-            procedure.onCatchException(e);
+            onCatchException(e);
         }
     }
 }

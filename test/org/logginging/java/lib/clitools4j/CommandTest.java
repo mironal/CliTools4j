@@ -10,32 +10,68 @@ public class CommandTest {
 
     @Test
     public void construct() {
-        Command<Kind> command = new Command<Kind>(Kind.Create, new TestProcedure());
+        Command<Kind> command = new Command<Kind>(Kind.Create) {
+
+            @Override
+            public void onExecute(Options options) throws CommandProcedureException {
+            }
+
+            @Override
+            public void onCatchException(CommandProcedureException e) {
+            }
+
+            @Override
+            public void onAskHelp(Options options) {
+            }
+
+        };
         assertThat(command.getType(), is(Kind.Create));
     }
 
     @Test(expected = NullPointerException.class)
     public void constructNullKind() {
-        Command<Kind> command = new Command<Kind>(null, new TestProcedure());
+        Command<Kind> command = new Command<Kind>(null) {
+
+            @Override
+            public void onExecute(Options options) throws CommandProcedureException {
+            }
+
+            @Override
+            public void onCatchException(CommandProcedureException e) {
+            }
+
+            @Override
+            public void onAskHelp(Options options) {
+            }
+
+        };
         command.toString();
     }
 
     @Test(expected = NullPointerException.class)
-    public void constructNullProcedure() {
-        Command<Kind> command = new Command<Kind>(Kind.Create, null);
-        assertThat(command.getType(), is(Kind.Create));
-    }
-
-    @Test(expected = NullPointerException.class)
     public void withHelpOptionNullArg() {
-        Command<Kind> command = new Command<Kind>(Kind.Create, new TestProcedure());
+        Command<Kind> command = new Command<Kind>(Kind.Create) {
+
+            @Override
+            public void onExecute(Options options) throws CommandProcedureException {
+            }
+
+            @Override
+            public void onCatchException(CommandProcedureException e) {
+            }
+
+            @Override
+            public void onAskHelp(Options options) {
+            }
+
+        };
         command.withHelpOption(null);
     }
 
     @Test
     public void proceedExecCommand() {
-        TestProcedure procedure = new TestProcedure();
-        Command<Kind> command = new Command<Kind>(Kind.Create, procedure);
+        TestCommand command = new TestCommand(Kind.Create);
+
         assertThat(command.getType(), is(Kind.Create));
 
         command.addOption("--hoge", "hogehoge");
@@ -43,22 +79,22 @@ public class CommandTest {
                 "create", "--hoge", "hogevalue"
         };
         // まだ何も実行されていないことを確認
-        assertThat(procedure.onAskHelpCalled, is(false));
-        assertThat(procedure.onExecuteCalled, is(false));
-        assertThat(procedure.onCatchErrorCalled, is(false));
+        assertThat(command.onAskHelpCalled, is(false));
+        assertThat(command.onExecuteCalled, is(false));
+        assertThat(command.onCatchErrorCalled, is(false));
 
         command.proceed(args);
 
         // 実行されたことを確認
-        assertThat(procedure.onAskHelpCalled, is(false));
-        assertThat(procedure.onExecuteCalled, is(true));
-        assertThat(procedure.onCatchErrorCalled, is(false));
+        assertThat(command.onAskHelpCalled, is(false));
+        assertThat(command.onExecuteCalled, is(true));
+        assertThat(command.onCatchErrorCalled, is(false));
 
     }
 
     @Test
     public void proceedCatchError() {
-        TestProcedure procedure = new TestProcedure() {
+        TestCommand command = new TestCommand(Kind.Create) {
 
             @Override
             public void onExecute(Options options) throws CommandProcedureException {
@@ -67,7 +103,6 @@ public class CommandTest {
             }
 
         };
-        Command<Kind> command = new Command<Kind>(Kind.Create, procedure);
         assertThat(command.getType(), is(Kind.Create));
 
         command.addOption("--hoge", "hogehoge");
@@ -75,24 +110,24 @@ public class CommandTest {
                 "create", "--hoge", "hogevalue"
         };
         // まだ何も実行されていないことを確認
-        assertThat(procedure.onAskHelpCalled, is(false));
-        assertThat(procedure.onExecuteCalled, is(false));
-        assertThat(procedure.onCatchErrorCalled, is(false));
+        assertThat(command.onAskHelpCalled, is(false));
+        assertThat(command.onExecuteCalled, is(false));
+        assertThat(command.onCatchErrorCalled, is(false));
 
         command.proceed(args);
 
         // 実行されたことを確認
-        assertThat(procedure.onAskHelpCalled, is(false));
-        assertThat(procedure.onExecuteCalled, is(true));
-        assertThat(procedure.onCatchErrorCalled, is(true));
+        assertThat(command.onAskHelpCalled, is(false));
+        assertThat(command.onExecuteCalled, is(true));
+        assertThat(command.onCatchErrorCalled, is(true));
     }
 
     @Test
     public void proceedHelp() {
 
-        TestProcedure procedure = new TestProcedure();
-        Command<Kind> command = new Command<Kind>(Kind.Create, procedure)
-                .withHelpOption("Help this command");
+        TestCommand command = new TestCommand(Kind.Create);
+        command.withHelpOption("Help this command");
+        
         assertThat(command.getType(), is(Kind.Create));
 
         command.addOption("--hoge", "hogehoge");
@@ -100,29 +135,29 @@ public class CommandTest {
             "--help"
         };
         // まだ何も実行されていないことを確認
-        assertThat(procedure.onAskHelpCalled, is(false));
-        assertThat(procedure.onExecuteCalled, is(false));
-        assertThat(procedure.onCatchErrorCalled, is(false));
+        assertThat(command.onAskHelpCalled, is(false));
+        assertThat(command.onExecuteCalled, is(false));
+        assertThat(command.onCatchErrorCalled, is(false));
 
         command.proceed(args);
 
-        assertThat(procedure.onAskHelpCalled, is(true));
-        assertThat(procedure.onExecuteCalled, is(false));
-        assertThat(procedure.onCatchErrorCalled, is(false));
+        assertThat(command.onAskHelpCalled, is(true));
+        assertThat(command.onExecuteCalled, is(false));
+        assertThat(command.onCatchErrorCalled, is(false));
 
-        procedure.reset();
+        command.reset();
         // まだ何も実行されていないことを確認
-        assertThat(procedure.onAskHelpCalled, is(false));
-        assertThat(procedure.onExecuteCalled, is(false));
-        assertThat(procedure.onCatchErrorCalled, is(false));
+        assertThat(command.onAskHelpCalled, is(false));
+        assertThat(command.onExecuteCalled, is(false));
+        assertThat(command.onCatchErrorCalled, is(false));
 
         args = new String[] {
                 "--help", "--hoge", "hogehoge"
         };
         command.proceed(args);
-        assertThat(procedure.onAskHelpCalled, is(true));
-        assertThat(procedure.onExecuteCalled, is(false));
-        assertThat(procedure.onCatchErrorCalled, is(false));
+        assertThat(command.onAskHelpCalled, is(true));
+        assertThat(command.onExecuteCalled, is(false));
+        assertThat(command.onCatchErrorCalled, is(false));
     }
 
     @Test
@@ -130,8 +165,7 @@ public class CommandTest {
         // 引数で--helpを与えたけど、オプションにhelpが追加されていないので
         // helpは実行されないというシナリオ
 
-        TestProcedure procedure = new TestProcedure();
-        Command<Kind> command = new Command<Kind>(Kind.Create, procedure);
+        TestCommand command = new TestCommand(Kind.Create);
         assertThat(command.getType(), is(Kind.Create));
 
         command.addOption("--hoge", "hogehoge");
@@ -139,15 +173,15 @@ public class CommandTest {
             "--help"
         };
         // まだ何も実行されていないことを確認
-        assertThat(procedure.onAskHelpCalled, is(false));
-        assertThat(procedure.onExecuteCalled, is(false));
-        assertThat(procedure.onCatchErrorCalled, is(false));
+        assertThat(command.onAskHelpCalled, is(false));
+        assertThat(command.onExecuteCalled, is(false));
+        assertThat(command.onCatchErrorCalled, is(false));
 
         command.proceed(args);
 
-        assertThat(procedure.onAskHelpCalled, is(false));
-        assertThat(procedure.onExecuteCalled, is(true));
-        assertThat(procedure.onCatchErrorCalled, is(false));
+        assertThat(command.onAskHelpCalled, is(false));
+        assertThat(command.onExecuteCalled, is(true));
+        assertThat(command.onCatchErrorCalled, is(false));
 
     }
 
