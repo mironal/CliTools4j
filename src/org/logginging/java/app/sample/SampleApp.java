@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.logginging.java.lib.clitools4j.Command;
 import org.logginging.java.lib.clitools4j.CommandLineExecutor;
-import org.logginging.java.lib.clitools4j.CommandProcedure;
 import org.logginging.java.lib.clitools4j.CommandProcedureException;
 import org.logginging.java.lib.clitools4j.Options;
 
@@ -32,7 +31,7 @@ public class SampleApp {
          */
 
         // createコマンドの定義
-        Command<Kind> create = new Command<SampleApp.Kind>(Kind.Create, new CommandProcedure() {
+        Command<Kind> create = new Command<SampleApp.Kind>(Kind.Create) {
             @Override
             // コマンドが実行される時に呼ばれる
             public void onExecute(Options options) throws CommandProcedureException {
@@ -66,15 +65,15 @@ public class SampleApp {
                               "hogehogehogehoge.";
                 System.out.println(help);
             }
-        })
+        };
         // ヘルプコマンドを追加する(-hと--helpが自動的に追加される
-        .withHelpOption("help this command.")
+        create.withHelpOption("help this command.");
          // createコマンドが取るオプションを登録
-        .addOption("--name", "object name.")
-        .addOption("--desc", "object description");
+        create.addOption("--name", "object name.");
+        create.addOption("--desc", "object description");
 
         // listコマンドの定義
-        Command<Kind> list = new Command<SampleApp.Kind>(Kind.List, new CommandProcedure() {
+        Command<Kind> list = new Command<SampleApp.Kind>(Kind.List) {
 
             @Override
             public void onAskHelp(Options options) {
@@ -90,10 +89,10 @@ public class SampleApp {
             public void onCatchException(CommandProcedureException e) {
                 // do something
             }
-        });
+        };
 
         // deleteコマンドの定義
-        Command<Kind> delete = new Command<Kind>(Kind.Delete, new CommandProcedure() {
+        Command<Kind> delete = new Command<Kind>(Kind.Delete) {
 
             @Override
             public void onAskHelp(Options options) {
@@ -110,7 +109,8 @@ public class SampleApp {
                 // do something
 
             }
-        }).addOption("--name", "object name.");
+        };
+        delete.addOption("--name", "object name.");
 
         CommandLineExecutor<Kind> executor = new CommandLineExecutor<SampleApp.Kind>(Kind.class) {
             @Override
